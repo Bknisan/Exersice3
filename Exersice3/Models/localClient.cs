@@ -11,7 +11,8 @@ namespace Exersice3.Models
 {
     public class localClient
     {
-        private bool canRead = true;
+        public bool canRead = true;
+        private bool connected = false;
         public event PropertyChangedEventHandler propChanged;
         public double lon { get; set; }
         public double lat { get; set; }
@@ -20,8 +21,19 @@ namespace Exersice3.Models
         {
             // open stream socket with tcp protocol on the same computer.
             Socket mySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            // connect to local host port numver 5400
-            mySocket.Connect(new IPEndPoint((IPAddress.Parse("127.0.0.1")),5400));
+            // connect to local host port number 5400
+            while (!connected)
+            {
+                try
+                {
+                    connected = true;
+                    mySocket.Connect(new IPEndPoint((IPAddress.Parse("127.0.0.1")), 5400));
+                }
+                catch(Exception)
+                {
+                    connected = false;
+                }
+            }
             while (canRead)
             {
                 // send get request specifeid by the value path.
@@ -36,7 +48,6 @@ namespace Exersice3.Models
                 string lati = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
                 lat = Double.Parse(((Regex.Match(lati, @"'(.*?[^\\])'")).Value).Trim('\''));
                 propChanged?.Invoke(this, new PropertyChangedEventArgs(lon + "," + lat));
-
             }
             mySocket.Close();
 

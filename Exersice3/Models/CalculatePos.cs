@@ -8,14 +8,14 @@ namespace Exersice3.Models
     public class CalculatePos
     {
         // norm val
-        public static double normLongi(string longi)
+        public static double normLongi(double longi)
         {
-            return (Double.Parse(longi) / 180);
+            return longi / 180;
         }
         // norm val
-        public static double normLati(string lati)
+        public static double normLati(double lati)
         {
-            return (Double.Parse(lati) / 360);
+            return lati / 360;
         }
     }
 }
