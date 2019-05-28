@@ -10,12 +10,12 @@ namespace Exersice3.Models
         // norm val
         public static double normLongi(double longi)
         {
-            return longi / 180;
+            return longi / 18 * 10;
         }
         // norm val
         public static double normLati(double lati)
         {
-            return lati / 360;
+            return lati / 9 * 10;
         }
     }
 }

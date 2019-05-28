@@ -14,7 +14,8 @@ namespace Exersice3.Controllers
     {
         private bool firstRead = false;
         localClient application;
-       [HttpGet]
+
+        [HttpGet]
         public ActionResult display(string ip, int port)
         {
             application = new localClient();
@@ -28,6 +29,7 @@ namespace Exersice3.Controllers
             while (!firstRead) ;
             return View();
         }
+
         [HttpGet]
         public ActionResult save(string ip, int port, string fileName)
         {
@@ -43,8 +45,8 @@ namespace Exersice3.Controllers
         public void Handler(object sender, PropertyChangedEventArgs args)
         {
             // update view bag.
-            ViewBag.longitude = CalculatePos.normLongi(application.lon);
-            ViewBag.latitude = CalculatePos.normLati(application.lat);
+            ViewBag.longitude = application.lon;
+            ViewBag.latitude = application.lat;
             firstRead = true;
         }
 
