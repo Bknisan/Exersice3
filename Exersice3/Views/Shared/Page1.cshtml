@@ -1,0 +1,28 @@
+﻿<html>
+<head>
+    <!--need to make the indicator depend on input variables -->
+    <style>
+        .map {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            object-fit: fill;
+        }
+
+        .indicator {
+            position: relative;
+            left: 50%;
+            top: 50%;
+            height: 2%;
+            width: 1%;
+        }
+    </style>
+</head>
+<body>
+    <img src="~/Images/export-map-share.png" class="map" />
+    <img src="~/Images/marker.png" class="indicator" />
+    @RenderBody()
+</body>
+</html>
