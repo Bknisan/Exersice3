@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web;
 
 namespace Exersice3.Models
@@ -16,8 +17,13 @@ namespace Exersice3.Models
         public event PropertyChangedEventHandler propChanged;
         public double lon { get; set; }
         public double lat { get; set; }
+
+        public localClient()
+        {
+           
+        }
         // request function.
-        public void Request()
+        public void Request(string ip, int port)
         {
             // open stream socket with tcp protocol on the same computer.
             Socket mySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -27,7 +33,7 @@ namespace Exersice3.Models
                 try
                 {
                     connected = true;
-                    mySocket.Connect(new IPEndPoint((IPAddress.Parse("127.0.0.1")), 5400));
+                    mySocket.Connect(new IPEndPoint((IPAddress.Parse(ip)), port));
                 }
                 catch(Exception)
                 {
@@ -48,9 +54,9 @@ namespace Exersice3.Models
                 string lati = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
                 lat = Double.Parse(((Regex.Match(lati, @"'(.*?[^\\])'")).Value).Trim('\''));
                 propChanged?.Invoke(this, new PropertyChangedEventArgs(lon + "," + lat));
+                // sleep for 250 miliseconds.
+                Thread.Sleep(250);
             }
-            mySocket.Close();
-
         }
     }
 }

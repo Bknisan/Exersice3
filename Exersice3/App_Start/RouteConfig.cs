@@ -13,14 +13,19 @@ namespace Exersice3
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            routes.MapRoute("Default", "",
+               defaults: new { controller = "Home", action = "index" });
+
             routes.MapRoute("display","display/{ip}/{port}",
                 defaults: new { controller = "Home", action = "display"}
             );
-            routes.MapRoute("save", "display/{ip}/{port}/{timeSlice}/{file}",
+            routes.MapRoute("Refresh", "display/{ip}/{port}/{timeSlice}",
+               defaults: new {controller = "Home", action = "Refresh" } 
+               );
+            routes.MapRoute("save", "display/{ip}/{port}/{timeSlice}/{timePeriod}/{file}",
                 defaults: new {controller = "Home", action = "save"}
                 );
-            routes.MapRoute("Default", "",
-                defaults: new { controller = "Home", action = "index" });
+           
         }
     }
 }

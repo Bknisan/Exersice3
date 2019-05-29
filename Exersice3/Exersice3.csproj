@@ -106,11 +106,13 @@
   <ItemGroup>
     <Content Include="Views\web.config" />
     <None Include="packages.config" />
-    <Content Include="Views\Shared\Page1.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\display.cshtml" />
     <Content Include="Views\Home\save.cshtml" />
     <Content Include="Views\Shared\_LayoutDef.cshtml" />
+    <Content Include="Views\Home\Refresh.cshtml" />
+    <Content Include="Views\Shared\Page2.cshtml" />
+    <Content Include="Views\Shared\Page1.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
