@@ -1,5 +1,7 @@
 ﻿@{
     Layout = null;
+    var latitude = ViewBag.latitude;
+    var longitude = ViewBag.longitude;
 }
 <!DOCTYPE html>
 <html>
@@ -9,43 +11,77 @@
 <style>
     body {
         background-image: url("../../Images/export-map-share.png");
+        background-size: cover;
         position: fixed;
         top: 0;
-        width: 100%;
-        height: 100%;
-        background-size: cover;
+        left:0;
     }
 </style>
 <body>
     <div>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <script>
+
+
+
+
             function map(x, in_min, in_max, out_min, out_max) {
                 return ((x - in_min) / (in_max - in_min))
                     * (out_max - out_min) + out_min;
             }
-            function refreshLayout() {
 
+
+
+            function wait(time) {
+                return new Promise(resolve => setTimeout(resolve, time));
             }
+
+
+            function refreshPosition() {
+                var allMyX = [];
+                var allMyY = [];
+                var location = document.getElementById("point");
+                var ctx = location.getContext("2d");
+                ctx.width = screen.width;
+                ctx.height = screen.height;
+
+                while (true) {
+                    @latitude = @ViewBag.latitude;
+                    @longitude = @ViewBag.longitude;
+                    allMyX.push(parseInt(String(map(@longitude, -180, 180, 0, screen.width))));
+                    allMyY.push(parseInt(String(map(@latitude, -90, 90, 0, screen.height))));
+                    ctx.beginPath();
+                    ctx.arc(parseInt(String(map(@longitude, -180, 180, 0, screen.width))), parseInt(String(map(@latitude, 90, -90, 0, screen.height))), 5, 0, 2 * Math.PI);
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = '#00FF00';
+                    ctx.fillStyle = '#FF0000';
+                    ctx.fill();
+                    ctx.stroke();
+                    showThis(ctx, allMyX, allMyY);
+                    await wait(@ViewBag.timeToSleep);
+                }
+
+                function showThis(dot, xPositions, yPositions) {
+                    dot.clearRect(-width, -height, dot.canvas.width, dot.canvas.height);
+                    dot.beginPath();
+                    dot.moveTo(xPositions[0], yPositions[0]);
+                    for (var i = 1; i < xPositions.length; i++) {
+                        mx = (i * i) + xPositions[i];
+                        my = (i * i) + yPositions[i];
+                        dot.lineTo(mx, my);
+                        }
+                    endX = xPositions[xPositions.length - 1] + (xPositions.length - 1) * (xPositions.length - 1);
+                    endY = yPositions[yPositions.length - 1] + (yPositions.length - 1) * (yPositions.length - 1);
+                    dot.arc(endX, endY, 1, 0, 2 * Math.PI);
+                    dot.stroke();
+                    dot.closePath();
+                }
         </script>
-        <canvas id="can"></canvas>
+        <canvas id="point"></canvas>
         <script>
-            var lat = parseInt(String(map(@ViewBag.latitude, 90, -90, 0, screen.height)));
-            var lon = parseInt(String(map(@ViewBag.longitude, -180, 180, 0, screen.width)));
-            var c = document.getElementById("can");
-            c.width = screen.width;
-            c.height = screen.height;
-            var ctx = c.getContext("2d");
-            ctx.beginPath();
-            ctx.arc(lon, lat, 5, 0, 2 * Math.PI);
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = '#00FF00';
-            ctx.fillStyle = '#FF0000';
-            ctx.fill();
-            ctx.stroke();
+                refreshPosition();
         </script>
     </div>
-
     @RenderBody()
 </body>
 </html>

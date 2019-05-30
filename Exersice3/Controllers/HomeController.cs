@@ -39,6 +39,8 @@ namespace Exersice3.Controllers
 
         public ActionResult Refresh(string ip, int port, int timeSlice)
         {
+            // show every sec/timeslice.
+            ViewBag.timeToSleep = (1000 / timeSlice);
             if (!readerAlreadyWorking)
             {
                 application = new localClient();
