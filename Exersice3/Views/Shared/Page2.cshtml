@@ -47,20 +47,36 @@
             function setLocation(value, max, min) {
                 return (100 *((value + max) / (max - min)));
         }
-        function positionMarker() {
-
-            var latitude = setLocation(@ViewBag.latitude, 90, -90);
-        var longitude = setLocation(@ViewBag.longitude, 180, -180);
-        var xPos = i + '%';
-        var yPos = i + '%';
+        function positionMarker(lon,lat) {
+            var latitude = setLocation(lon, 90, -90);
+            var longitude = setLocation(lat, 180, -180);
+            var xPos = longitude + '%';
+            var yPos = latitude + '%';
             var marker = document.querySelector('.marker');
             marker.style.top = yPos;
             marker.style.left = xPos;
-            console.log(`positioning marker at: x(${xPos}) y(${yPos})`);
         }
         function getPosition() {
-            i += 2;
-            positionMarker();
+            var lon;
+            var lat;
+            var moveOrNot = false;
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("Position", "Home")',
+                dataType: "json",
+                success: function (response) {
+                    moveOrNot = true;
+                    lon = response.longi;
+                    lat = response.lati;
+                },
+                error: function (response) {
+                    console.log(response);
+                }
+
+            });
+            if (moveOrNot) {
+                positionMarker(lon, lat);
+          
         }
         //getPosition();
         setInterval(getPosition, @ViewBag.interval);

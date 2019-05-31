@@ -7,15 +7,14 @@ namespace Exersice3.Models
 {
     public class CalculatePos
     {
-        // norm val
-        public static double normLongi(double longi)
+        // getters and setters.
+        public double longi {get; set;}
+        public double lati { get; set;}
+        // constructor.
+        public CalculatePos(double longitude, double latitude)
         {
-            return longi / 18 * 10;
-        }
-        // norm val
-        public static double normLati(double lati)
-        {
-            return lati / 9 * 10;
+            longi = longitude;
+            lati = latitude;
         }
     }
 }

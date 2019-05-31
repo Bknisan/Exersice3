@@ -16,7 +16,7 @@ namespace Exersice3.Models
         private bool connected = false;
         public event PropertyChangedEventHandler propChanged;
         public double lon { get; set; }
-        public double lat { get; set; }
+        public double lat { get; set; } 
 
         public localClient()
         {

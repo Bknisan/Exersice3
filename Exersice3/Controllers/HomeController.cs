@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using Exersice3.Models;
 
 namespace Exersice3.Controllers
@@ -39,7 +40,6 @@ namespace Exersice3.Controllers
 
         public ActionResult Refresh(string ip, int port, int timeSlice)
         {
-
             ViewBag.interval = (1000 / timeSlice);
             if (!readerAlreadyWorking)
             {
@@ -75,6 +75,7 @@ namespace Exersice3.Controllers
 
         public ActionResult Index()
         {
+            string myjson = Position();
             return View();
         }
 
@@ -87,16 +88,14 @@ namespace Exersice3.Controllers
             firstRead = true;
         }
 
-        [HttpGet]
-        public double getLongitude()
-        {
-            return application.lon;
-        }
 
         [HttpGet]
-        public double getLatitude()
+        public string Position()
         {
-            return application.lat;
+            CalculatePos position = new CalculatePos(0,0);
+            var json = new JavaScriptSerializer().Serialize(position);
+            return json;
+
         }
 
     }
