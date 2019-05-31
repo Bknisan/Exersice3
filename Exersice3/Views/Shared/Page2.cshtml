@@ -1,87 +1,70 @@
 ﻿@{
     Layout = null;
-    var latitude = ViewBag.latitude;
-    var longitude = ViewBag.longitude;
+    var interval = ViewBag.interval;
 }
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Location Animation</title>
+    <title>Plane Location</title>
 </head>
 <style>
+    html {
+        height: 100%;
+    }
+
     body {
-        background-image: url("../../Images/export-map-share.png");
-        background-size: cover;
-        position: fixed;
-        top: 0;
-        left:0;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    .map {
+        height: 100%;
+        width: 100%;
+    }
+
+    .marker {
+        position: absolute;
+        height: 15px;
+        width: 15px;
+    }
+
+    .app-container {
+        height: 100%;
+        position: relative;
     }
 </style>
 <body>
-    <div>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script>
-
-
-
-
-            function map(x, in_min, in_max, out_min, out_max) {
-                return ((x - in_min) / (in_max - in_min))
-                    * (out_max - out_min) + out_min;
-            }
-
-
-
-            function wait(time) {
-                return new Promise(resolve => setTimeout(resolve, time));
-            }
-
-
-            function refreshPosition() {
-                var allMyX = [];
-                var allMyY = [];
-                var location = document.getElementById("point");
-                var ctx = location.getContext("2d");
-                ctx.width = screen.width;
-                ctx.height = screen.height;
-
-                while (true) {
-                    @latitude = @ViewBag.latitude;
-                    @longitude = @ViewBag.longitude;
-                    allMyX.push(parseInt(String(map(@longitude, -180, 180, 0, screen.width))));
-                    allMyY.push(parseInt(String(map(@latitude, -90, 90, 0, screen.height))));
-                    ctx.beginPath();
-                    ctx.arc(parseInt(String(map(@longitude, -180, 180, 0, screen.width))), parseInt(String(map(@latitude, 90, -90, 0, screen.height))), 5, 0, 2 * Math.PI);
-                    ctx.lineWidth = 3;
-                    ctx.strokeStyle = '#00FF00';
-                    ctx.fillStyle = '#FF0000';
-                    ctx.fill();
-                    ctx.stroke();
-                    showThis(ctx, allMyX, allMyY);
-                    await wait(@ViewBag.timeToSleep);
-                }
-
-                function showThis(dot, xPositions, yPositions) {
-                    dot.clearRect(-width, -height, dot.canvas.width, dot.canvas.height);
-                    dot.beginPath();
-                    dot.moveTo(xPositions[0], yPositions[0]);
-                    for (var i = 1; i < xPositions.length; i++) {
-                        mx = (i * i) + xPositions[i];
-                        my = (i * i) + yPositions[i];
-                        dot.lineTo(mx, my);
-                        }
-                    endX = xPositions[xPositions.length - 1] + (xPositions.length - 1) * (xPositions.length - 1);
-                    endY = yPositions[yPositions.length - 1] + (yPositions.length - 1) * (yPositions.length - 1);
-                    dot.arc(endX, endY, 1, 0, 2 * Math.PI);
-                    dot.stroke();
-                    dot.closePath();
-                }
-        </script>
-        <canvas id="point"></canvas>
-        <script>
-                refreshPosition();
-        </script>
+    <div class="app-container">
+        <img src="~/Images/export-map-share.png" class="map" />
+        <img src="~/Images/marker.png" class="marker" />
     </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script>
+        var i = 10;
+            function setLocation(value, max, min) {
+                return (100 *((value + max) / (max - min)));
+        }
+        function positionMarker() {
+
+            var latitude = setLocation(@ViewBag.latitude, 90, -90);
+        var longitude = setLocation(@ViewBag.longitude, 180, -180);
+        var xPos = i + '%';
+        var yPos = i + '%';
+            var marker = document.querySelector('.marker');
+            marker.style.top = yPos;
+            marker.style.left = xPos;
+            console.log(`positioning marker at: x(${xPos}) y(${yPos})`);
+        }
+        function getPosition() {
+            i += 2;
+            positionMarker();
+        }
+        //getPosition();
+        setInterval(getPosition, 1000);
+    </script>
     @RenderBody()
 </body>
 </html>

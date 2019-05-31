@@ -39,8 +39,8 @@ namespace Exersice3.Controllers
 
         public ActionResult Refresh(string ip, int port, int timeSlice)
         {
-            // show every sec/timeslice.
-            ViewBag.timeToSleep = (1000 / timeSlice);
+
+            Session["time"] = timeSlice;
             if (!readerAlreadyWorking)
             {
                 application = new localClient();
@@ -85,6 +85,18 @@ namespace Exersice3.Controllers
             ViewBag.longitude = application.lon;
             ViewBag.latitude = application.lat;
             firstRead = true;
+        }
+
+        [HttpGet]
+        public double getLongitude()
+        {
+            return application.lon;
+        }
+
+        [HttpGet]
+        public double getLatitude()
+        {
+            return application.lat;
         }
 
     }
