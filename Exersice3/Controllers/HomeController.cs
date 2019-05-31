@@ -40,7 +40,7 @@ namespace Exersice3.Controllers
         public ActionResult Refresh(string ip, int port, int timeSlice)
         {
 
-            Session["time"] = timeSlice;
+            ViewBag.interval = (1000 / timeSlice);
             if (!readerAlreadyWorking)
             {
                 application = new localClient();
