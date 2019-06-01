@@ -12,15 +12,20 @@ namespace Exersice3.Models
 {
     public class localClient
     {
-        public bool canRead = true;
-        private bool connected = false;
         public event PropertyChangedEventHandler propChanged;
         public double lon { get; set; }
-        public double lat { get; set; } 
-
-        public localClient()
+        public double lat { get; set; }
+        private static localClient s_instace = null;
+        public static localClient Instance
         {
-           
+            get
+            {
+                if (s_instace == null)
+                {
+                    s_instace = new localClient();
+                }
+                return s_instace;
+            }
         }
         // request function.
         public void Request(string ip, int port)
@@ -28,20 +33,17 @@ namespace Exersice3.Models
             // open stream socket with tcp protocol on the same computer.
             Socket mySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             // connect to local host port number 5400
-            while (!connected)
+            while (true)
             {
                 try
                 {
-                    connected = true;
                     mySocket.Connect(new IPEndPoint((IPAddress.Parse(ip)), port));
+                    break;
                 }
                 catch(Exception)
                 {
-                    connected = false;
                 }
             }
-            while (canRead)
-            {
                 // send get request specifeid by the value path.
                 mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /position/longitude-deg\r\n"));
                 byte[] messege = new byte[512];
@@ -54,7 +56,7 @@ namespace Exersice3.Models
                 string lati = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
                 lat = Double.Parse(((Regex.Match(lati, @"'(.*?[^\\])'")).Value).Trim('\''));
                 propChanged?.Invoke(this, new PropertyChangedEventArgs(lon + "," + lat));
-            }
+            
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Exersice3
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            routes.MapRoute("Default", "",
+            routes.MapRoute("Default", "{controller}/{action}",
                defaults: new { controller = "Home", action = "index" });
 
             routes.MapRoute("display","display/{ip}/{port}",

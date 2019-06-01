@@ -1,86 +1,69 @@
 ﻿@{
+    ViewBag.Title = "Refresh";
     Layout = null;
     var interval = ViewBag.interval;
-}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Plane Location</title>
-</head>
-<style>
-    html {
-        height: 100%;
     }
 
-    body {
-        height: 100%;
-        margin: 0;
-        overflow: hidden;
-    }
+    <!DOCTYPE html>
+    <html>
+    <style>
+        html {
+            height: 100%;
+        }
 
-    .map {
-        height: 100%;
-        width: 100%;
-    }
+        body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
 
-    .marker {
-        position: absolute;
-        height: 15px;
-        width: 15px;
-    }
+        .map {
+            height: 100%;
+            width: 100%;
+        }
 
-    .app-container {
-        height: 100%;
-        position: relative;
-    }
-</style>
-<body>
-    <div class="app-container">
-        <img src="~/Images/export-map-share.png" class="map" />
-        <img src="~/Images/marker.png" class="marker" />
-    </div>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-            crossorigin="anonymous"></script>
-    <script>
-        var i = 10;
+        .marker {
+            position: absolute;
+            height: 15px;
+            width: 15px;
+        }
+
+        .app-container {
+            height: 100%;
+            position: relative;
+        }
+    </style>
+    <body>
+        <div class="app-container">
+            <img src="~/Images/export-map-share.png" class="map" />
+            <img src="~/Images/marker.png" class="marker" />
+        </div>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+                integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+                crossorigin="anonymous"></script>
+        <script>
             function setLocation(value, max, min) {
                 return (100 *((value + max) / (max - min)));
         }
-        function positionMarker(lon,lat) {
-            var latitude = setLocation(lon, 90, -90);
-            var longitude = setLocation(lat, 180, -180);
-            var xPos = longitude + '%';
-            var yPos = latitude + '%';
-            var marker = document.querySelector('.marker');
-            marker.style.top = yPos;
-            marker.style.left = xPos;
+            function positionMarker(lon, lat) {
+                var latitude = setLocation(lat, 90, -90);
+                var longitude = setLocation(lon, 180, -180);
+                var xPos = longitude + '%';
+                var yPos = latitude + '%';
+                var marker = document.querySelector('.marker');
+                marker.style.top = yPos;
+                marker.style.left = xPos;
+                console.log(xPos);
+                console.log(yPos);
         }
         function getPosition() {
-            var lon;
-            var lat;
-            var moveOrNot = false;
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("Position", "Home")',
-                dataType: "json",
-                success: function (response) {
-                    moveOrNot = true;
-                    lon = response.longi;
-                    lat = response.lati;
-                },
-                error: function (response) {
-                    console.log(response);
-                }
-
-            });
-            if (moveOrNot) {
-                positionMarker(lon, lat);
-          
+            $.post('@Url.Action("Position")').done(function (response) {
+                var json = JSON.parse(response);
+                positionMarker(json.longi, json.lati);
+            })
         }
-        //getPosition();
-        setInterval(getPosition, @ViewBag.interval);
-    </script>
-    @RenderBody()
-</body>
+        setInterval(getPosition,@interval);
+        </script>
+        @RenderBody()
+    </body>
 </html>
