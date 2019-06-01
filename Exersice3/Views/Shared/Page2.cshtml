@@ -32,11 +32,19 @@
             height: 100%;
             position: relative;
         }
+        .distance {
+            position:fixed;
+            z-index:1;
+            height:100%;
+            width:100%;
+        }
     </style>
     <body>
         <div class="app-container">
-            <img src="~/Images/export-map-share.png" class="map" />
-            <img src="~/Images/marker.png" class="marker" />
+                <img src="~/Images/export-map-share.png" class="map" />
+                <img src="~/Images/marker.png" class="marker" />
+                <svg class="distance" xmlns="http://www.w3.org/2000/svg" id="way">
+                </svg>
         </div>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"
                 integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
@@ -53,15 +61,22 @@
                 var marker = document.querySelector('.marker');
                 marker.style.top = yPos;
                 marker.style.left = xPos;
-                console.log(xPos);
-                console.log(yPos);
         }
         function getPosition() {
             $.post('@Url.Action("Position")').done(function (response) {
                 var json = JSON.parse(response);
                 positionMarker(json.longi, json.lati);
+                if (lastPos) {
+                    var lastx = (setLocation(lastPos.longi))*screen.width;
+                    var lasty = (setLocation(lastPos.lati))*screen.height;
+                    var newx = (setLocation(response.longi))*screen.width;
+                    var newy = (setLocation(response.lati))*screen.height;
+                    document.querySelector('svg').innerHTML += `<line x1 =  '${lastx}' y1 =  '${lasty}'  x2 =  '${newx}' y2 =  '${newy}' style="stroke:rgb(255,0,0);stroke-width:2"`
+                }
+                lastPos = response;
             })
-        }
+            }
+        var lastPos;
         setInterval(getPosition,@interval);
         </script>
         @RenderBody()
