@@ -1,0 +1,68 @@
+﻿
+@{
+    ViewBag.Title = "save";
+    Layout = null;
+    var longitude = ViewBag.longitude;
+    var latitude = ViewBag.latitude;
+    var period = ViewBag.period;
+    var frequancy = ViewBag.interval;
+    var fileName = ViewBag.fileName;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>save info page</title>
+</head>
+<style>
+    html {
+        height: 100%;
+    }
+
+    body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    .map {
+        height: 100%;
+        width: 100%;
+    }
+
+    .marker {
+        position: absolute;
+        height: 15px;
+        width: 15px;
+    }
+
+    .app-container {
+        height: 100%;
+        position: relative;
+    }
+</style>
+<body>
+    <div class="app-container">
+        <img src="~/Images/export-map-share.png" class="map" />
+        <img src="~/Images/marker.png" class="marker" />
+    </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>
+        function applicator() {
+            $.post('@Url.Action("WriteData")', {file : "@fileName"}, function () { });
+        }
+            function map(value, max, min) {
+                return (100 *((value + max) / (max - min)));
+            }
+            var lat = map(@latitude, 90, -90);
+            var lon = map(@longitude, 180, -180);
+            var xPos = lon + '%';
+            var yPos = lat + '%';
+            var marker = document.querySelector('.marker');
+            marker.style.top = yPos;
+            marker.style.left = xPos;
+        setTimeout(setInterval(applicator,@frequancy),@period);
+    </script>
+    @RenderBody()
+</body>
+</html>
+

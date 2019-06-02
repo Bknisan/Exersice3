@@ -113,6 +113,7 @@
     <Content Include="Views\Home\Refresh.cshtml" />
     <Content Include="Views\Shared\Page2.cshtml" />
     <Content Include="Views\Shared\Page1.cshtml" />
+    <Content Include="Views\Shared\Page3.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

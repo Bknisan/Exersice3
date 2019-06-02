@@ -12,10 +12,14 @@ namespace Exersice3.Models
 {
     public class localClient
     {
+        static object lockMethod = new object();
+        static object lockMethod2 = new object();
         public event PropertyChangedEventHandler propChanged;
-        public double lon { get; set; }
-        public double lat { get; set; }
+        public static Socket mySocket;
+        public static string ip { get; set; } = "127.0.0.1";
+        public static int port { get; set; } = 5400;
         private static localClient s_instace = null;
+        public bool changeIndicator { get; set; } = false;
         public static localClient Instance
         {
             get
@@ -23,40 +27,81 @@ namespace Exersice3.Models
                 if (s_instace == null)
                 {
                     s_instace = new localClient();
+                    // open stream socket with tcp protocol on the same computer.
+                     mySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    // connect to local host port number 5400
+                    while (true)
+                    {
+                        try
+                        {
+                            mySocket.Connect(new IPEndPoint((IPAddress.Parse(ip)), port));
+                            break;
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                    }
                 }
                 return s_instace;
             }
         }
-        // request function.
-        public void Request(string ip, int port)
+        // request function. longitude and latitude.
+        public double[] Request(string ip, int port)
         {
-            // open stream socket with tcp protocol on the same computer.
-            Socket mySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            // connect to local host port number 5400
-            while (true)
-            {
-                try
-                {
-                    mySocket.Connect(new IPEndPoint((IPAddress.Parse(ip)), port));
-                    break;
-                }
-                catch(Exception)
-                {
-                }
-            }
+            lock(lockMethod){
                 // send get request specifeid by the value path.
                 mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /position/longitude-deg\r\n"));
                 byte[] messege = new byte[512];
-                // translate byte array to string
+                Array.Clear(messege, 0, 512);
                 string longi = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
-                // clean recieved string.
-                lon = Double.Parse(((Regex.Match(longi, @"'(.*?[^\\])'")).Value).Trim('\''));
+                double longii = Double.Parse(((Regex.Match(longi, @"'(.*?[^\\])'")).Value).Trim('\''));
                 mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /position/latitude-deg\r\n"));
-                Array.Clear(messege, 0, messege.Length);
-                string lati = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
-                lat = Double.Parse(((Regex.Match(lati, @"'(.*?[^\\])'")).Value).Trim('\''));
-                propChanged?.Invoke(this, new PropertyChangedEventArgs(lon + "," + lat));
+                byte[] messege2 = new byte[512];
+                Array.Clear(messege2, 0, 512);
+                string lati = System.Text.Encoding.ASCII.GetString(messege2, 0, mySocket.Receive(messege2));
+                double latii = Double.Parse(((Regex.Match(lati, @"'(.*?[^\\])'")).Value).Trim('\''));
+                changeIndicator = !changeIndicator;
+                propChanged?.Invoke(this, new PropertyChangedEventArgs(longii + "," + latii));
+                double[] vals = new double[2];
+                vals[0] = longii;
+                vals[1] = latii;
+                return vals;
+            }
             
+        }
+        // request function. altimeter, speed, heading, longitude and latitude.
+        public string RequestAdditional()
+        {
+            lock (lockMethod2)
+            {
+                // send get request specifeid by the value path.
+                mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /position/longitude-deg\r\n"));
+                byte[] messege = new byte[512];
+                Array.Clear(messege, 0, 512);
+                string longi = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
+                double longii = Double.Parse(((Regex.Match(longi, @"'(.*?[^\\])'")).Value).Trim('\''));
+                mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /position/latitude-deg\r\n"));
+                Array.Clear(messege, 0, 512);
+                string lati = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
+                double latii = Double.Parse(((Regex.Match(lati, @"'(.*?[^\\])'")).Value).Trim('\''));
+                mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /instrumentation/airspeed-indicator/indicated-speed-kt\r\n"));
+                Array.Clear(messege, 0, 512);
+                string airspeed = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
+                double airspeedd = Double.Parse(((Regex.Match(airspeed, @"'(.*?[^\\])'")).Value).Trim('\''));
+                mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /instrumentation/altimeter/indicated-altitude-ft\r\n"));
+                Array.Clear(messege, 0, 512);
+                string altimeter = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
+                double altimeterr = Double.Parse(((Regex.Match(altimeter, @"'(.*?[^\\])'")).Value).Trim('\''));
+                mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /instrumentation/heading-indicator/indicated-heading-deg\r\n"));
+                Array.Clear(messege, 0, 512);
+                string heading = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
+                double headingg = Double.Parse(((Regex.Match(heading, @"'(.*?[^\\])'")).Value).Trim('\''));
+                changeIndicator = !changeIndicator;
+                string args = (longii.ToString()) + "," + (latii.ToString()) + "," + (airspeedd.ToString()) + "," + (altimeterr.ToString()) + "," + (headingg.ToString());
+                return args;
+               
+            }
         }
     }
 }
