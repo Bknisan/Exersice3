@@ -62,8 +62,6 @@ namespace Exersice3.Controllers
             ViewBag.period = timePeriod * 1000;
             ViewBag.interval = (1000 / timeSlice);
             ViewBag.fileName = file;
-            // create empty text file with specified name and closing it.
-            System.IO.File.Create(file).Close();
             if (!readerAlreadyWorking)
             {
                 // run this function when parameters updated.
@@ -100,6 +98,7 @@ namespace Exersice3.Controllers
         [HttpPost]
         public void WriteData(string fileName)
         {
+            string path = @"~/flight1";
            // get data.
            string data =  localClient.Instance.RequestAdditional();
            data += "\r\n";

@@ -85,20 +85,16 @@ namespace Exersice3.Models
                 Array.Clear(messege, 0, 512);
                 string lati = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
                 double latii = Double.Parse(((Regex.Match(lati, @"'(.*?[^\\])'")).Value).Trim('\''));
-                mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /instrumentation/airspeed-indicator/indicated-speed-kt\r\n"));
+                mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /controls/engines/current-engine/throttle\r\n"));
                 Array.Clear(messege, 0, 512);
-                string airspeed = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
-                double airspeedd = Double.Parse(((Regex.Match(airspeed, @"'(.*?[^\\])'")).Value).Trim('\''));
-                mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /instrumentation/altimeter/indicated-altitude-ft\r\n"));
+                string throttle = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
+                double throttllee = Double.Parse(((Regex.Match(throttle, @"'(.*?[^\\])'")).Value).Trim('\''));
+                mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /controls/flight/rudder\r\n"));
                 Array.Clear(messege, 0, 512);
-                string altimeter = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
-                double altimeterr = Double.Parse(((Regex.Match(altimeter, @"'(.*?[^\\])'")).Value).Trim('\''));
-                mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /instrumentation/heading-indicator/indicated-heading-deg\r\n"));
-                Array.Clear(messege, 0, 512);
-                string heading = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
-                double headingg = Double.Parse(((Regex.Match(heading, @"'(.*?[^\\])'")).Value).Trim('\''));
+                string rudder = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
+                double rudderr = Double.Parse(((Regex.Match(rudder, @"'(.*?[^\\])'")).Value).Trim('\''));
                 changeIndicator = !changeIndicator;
-                string args = (longii.ToString()) + "," + (latii.ToString()) + "," + (airspeedd.ToString()) + "," + (altimeterr.ToString()) + "," + (headingg.ToString());
+                string args = (longii.ToString()) + "," + (latii.ToString()) + "," + (throttllee.ToString()) + "," + (rudderr.ToString());
                 return args;
                
             }
