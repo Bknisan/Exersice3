@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Exersice3.Models;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Exersice3.Controllers
 {
@@ -18,11 +19,16 @@ namespace Exersice3.Controllers
         private double lat;
         private bool readerAlreadyWorking = false;
         private bool firstRead = false;
-        private System.Timers.Timer interval;
-
 
         public ActionResult Index()
         {
+            return View();
+        }
+
+        public ActionResult animation(string fileName, int frequancy)
+        {
+            localClient.Instance.FileToRead = fileName;
+            ViewBag.interval = (1000 / frequancy);
             return View();
         }
         [HttpGet]
@@ -61,7 +67,7 @@ namespace Exersice3.Controllers
         {
             ViewBag.period = timePeriod * 1000;
             ViewBag.interval = (1000 / timeSlice);
-            ViewBag.fileName = file;
+            localClient.Instance.FileToWrite = file;
             if (!readerAlreadyWorking)
             {
                 // run this function when parameters updated.
@@ -96,15 +102,21 @@ namespace Exersice3.Controllers
         }
 
         [HttpPost]
-        public void WriteData(string fileName)
+        public string WriteData(string fileName)
         {
-            string path = @"~/flight1";
-           // get data.
-           string data =  localClient.Instance.RequestAdditional();
-           data += "\r\n";
-           byte[] info = System.Text.Encoding.ASCII.GetBytes(data);
-           FileStream writer = new FileStream(fileName, FileMode.Append);
-           writer.Write(info,0,data.Length);
+            // get data.
+            string data = localClient.Instance.RequestAdditional();
+            string[] vals = data.Split(',');
+            CalculatePos position = new CalculatePos(Double.Parse(vals[0]), Double.Parse(vals[1]));
+            data += "\r\n";
+            byte[] info = System.Text.Encoding.ASCII.GetBytes(data);
+            //write data
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream fsout = new FileStream(localClient.Instance.FileToWrite, FileMode.Append, FileAccess.Write, FileShare.None);
+            bf.Serialize(fsout, info);
+            fsout.Close();
+            var json = new JavaScriptSerializer().Serialize(position);
+            return json;
         }
 
     }

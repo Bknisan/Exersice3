@@ -47,8 +47,8 @@
 </style>
 <body>
     <div class="app-container">
-        <img src="~/Images/export-map-share.png" class="map" />
-        <img src="~/Images/marker.png" class="marker" />
+        <img src="~/App_Data/Images/export-map-share.png" class="map" />
+        <img src="~/App_Data/Images/marker.png" class="marker" />
         <canvas class="distance" width="300" height="300" style="border:2px solid #d3d3d3;" id="way">
         </canvas>
     </div>
@@ -85,13 +85,14 @@
                     airplanePath.stroke();
                 }
                 lastPos = position;
-            })
+            });
         }
         var marker = document.querySelector('.marker');
         var lastPos;
         var airplanePath = document.getElementById('way').getContext('2d');
         document.getElementById('way').height = window.innerHeight;
         document.getElementById('way').width = window.innerWidth;
+        // check.
         console.log(airplanePath);
         getPosition();
         setInterval(getPosition,@interval);

@@ -15,6 +15,8 @@ namespace Exersice3.Models
         static object lockMethod = new object();
         static object lockMethod2 = new object();
         public event PropertyChangedEventHandler propChanged;
+        public string FileToRead;
+        public string FileToWrite;
         public static Socket mySocket;
         public static string ip { get; set; } = "127.0.0.1";
         public static int port { get; set; } = 5400;

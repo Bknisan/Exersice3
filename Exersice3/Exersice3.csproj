@@ -89,8 +89,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="Images\export-map-share.png" />
-    <Content Include="Images\marker.png" />
+    <Content Include="App_Data\Images\export-map-share.png" />
+    <Content Include="App_Data\Images\marker.png" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +114,8 @@
     <Content Include="Views\Shared\Page2.cshtml" />
     <Content Include="Views\Shared\Page1.cshtml" />
     <Content Include="Views\Shared\Page3.cshtml" />
+    <Content Include="Views\Home\animation.cshtml" />
+    <Content Include="Views\Shared\Page4.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -121,9 +123,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
