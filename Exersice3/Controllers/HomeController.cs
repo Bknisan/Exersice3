@@ -1,11 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Timers;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Exersice3.Models;
@@ -112,7 +107,7 @@ namespace Exersice3.Controllers
             byte[] info = System.Text.Encoding.ASCII.GetBytes(data);
             //write data
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream fsout = new FileStream(localClient.Instance.FileToWrite, FileMode.Append, FileAccess.Write, FileShare.None);
+            FileStream fsout = new FileStream(System.Web.Hosting.HostingEnvironment.MapPath(localClient.Instance.FileToWrite), FileMode.Append, FileAccess.Write, FileShare.None);
             bf.Serialize(fsout, info);
             fsout.Close();
             var json = new JavaScriptSerializer().Serialize(position);
