@@ -23,6 +23,10 @@ namespace Exersice3.Controllers
         public ActionResult animation(string fileName, int frequancy)
         {
             localClient.Instance.FileToRead = fileName;
+            // make sure start from the begginig.
+            FileStream fsin = new FileStream(System.Web.Hosting.HostingEnvironment.MapPath(localClient.Instance.FileToRead), FileMode.Open, FileAccess.Read, FileShare.None);
+            fsin.Seek(0, SeekOrigin.Begin);
+            fsin.Close();
             ViewBag.interval = (1000 / frequancy);
             return View();
         }
@@ -110,6 +114,29 @@ namespace Exersice3.Controllers
             FileStream fsout = new FileStream(System.Web.Hosting.HostingEnvironment.MapPath(localClient.Instance.FileToWrite), FileMode.Append, FileAccess.Write, FileShare.None);
             bf.Serialize(fsout, info);
             fsout.Close();
+            var json = new JavaScriptSerializer().Serialize(position);
+            return json;
+        }
+
+        [HttpPost]
+        public string ReadLine(string fileName)
+        {           
+            FileStream fsin = new FileStream(System.Web.Hosting.HostingEnvironment.MapPath(localClient.Instance.FileToRead), FileMode.Open, FileAccess.Read, FileShare.None);
+            fsin.Seek(0, SeekOrigin.Current);
+            StreamReader sr = new StreamReader(fsin);
+            string values = sr.ReadLine();
+            // took all the data. begin again.
+            if(values == "")
+            {
+                fsin.Seek(0, SeekOrigin.Begin);
+                fsin.Close();
+                return "";
+            }
+            fsin.Close();
+            // split by ','
+            string[] relevant = values.Split(',');
+            // take just the lan and the lot.
+            CalculatePos position = new CalculatePos(Double.Parse(relevant[0]),Double.Parse(relevant[1]));
             var json = new JavaScriptSerializer().Serialize(position);
             return json;
         }
