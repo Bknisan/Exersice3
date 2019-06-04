@@ -22,12 +22,25 @@ namespace Exersice3.Controllers
         [HttpGet]
         public ActionResult animation(string fileName, int frequancy)
         {
+            // clean;
+            localClient.Instance.indexer = 0;
+            localClient.Instance.fileByLines.Clear();
             localClient.Instance.FileToRead = fileName;
             // make sure start from the begginig.
             string path = @"~/App_Data/";
             path += localClient.Instance.FileToRead;
             FileStream fsin = new FileStream(Server.MapPath(path), FileMode.Open, FileAccess.Read, FileShare.None);
             fsin.Seek(0, SeekOrigin.Begin);
+            StreamReader sr = new StreamReader(fsin);
+            while (!sr.EndOfStream)
+            {
+                string [] val = (sr.ReadLine()).Split(',');
+                if (val.Length == 4)
+                {
+                    CalculatePos pos = new CalculatePos(Double.Parse(val[2]), Double.Parse(val[3]));
+                    localClient.Instance.fileByLines.Add(pos);
+                }
+            }
             fsin.Close();
             ViewBag.interval = (1000 / frequancy);
             return View("animation");
@@ -135,26 +148,19 @@ namespace Exersice3.Controllers
         [HttpPost]
         public string ReadLine(string fileName)
         {
-            string path = @"~/App_Data/";
-            path += localClient.Instance.FileToRead;
-            FileStream fsin = new FileStream(Server.MapPath(path), FileMode.Open, FileAccess.Read, FileShare.None);
-            fsin.Seek(0, SeekOrigin.Current);
-            StreamReader sr = new StreamReader(fsin);
-            string values = sr.ReadLine();
-            // took all the data. begin again.
-            if(values == "")
+            try
             {
-                fsin.Seek(0, SeekOrigin.Begin);
-                fsin.Close();
+                CalculatePos position = localClient.Instance.fileByLines[localClient.Instance.indexer];
+                localClient.Instance.indexer += 1;
+                var json = new JavaScriptSerializer().Serialize(position);
+                return json;
+            }
+            catch (Exception)
+            {
                 return "";
             }
-            fsin.Close();
-            // split by ','
-            string[] relevant = values.Split(',');
-            // take just the lan and the lot.
-            CalculatePos position = new CalculatePos(Double.Parse(relevant[0]),Double.Parse(relevant[1]));
-            var json = new JavaScriptSerializer().Serialize(position);
-            return json;
+           
+            
         }
 
     }

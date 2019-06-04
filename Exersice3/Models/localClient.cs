@@ -12,6 +12,9 @@ namespace Exersice3.Models
 {
     public class localClient
     {
+        public int indexer = 0;
+        public List<CalculatePos> fileByLines = new List<CalculatePos>();
+        public object lockAction = new object();
         static object lockMethod = new object();
         static object lockMethod2 = new object();
         public event PropertyChangedEventHandler propChanged;
@@ -78,8 +81,8 @@ namespace Exersice3.Models
             lock (lockMethod2)
             {
                 // send get request specifeid by the value path.
-                mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /position/longitude-deg\r\n"));
                 byte[] messege = new byte[512];
+                mySocket.Send(System.Text.Encoding.ASCII.GetBytes("get /position/longitude-deg\r\n"));
                 Array.Clear(messege, 0, 512);
                 string longi = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
                 double longii = Double.Parse(((Regex.Match(longi, @"'(.*?[^\\])'")).Value).Trim('\''));
@@ -96,7 +99,7 @@ namespace Exersice3.Models
                 string rudder = System.Text.Encoding.ASCII.GetString(messege, 0, mySocket.Receive(messege));
                 double rudderr = Double.Parse(((Regex.Match(rudder, @"'(.*?[^\\])'")).Value).Trim('\''));
                 changeIndicator = !changeIndicator;
-                string args = (longii.ToString()) + "," + (latii.ToString()) + "," + (throttllee.ToString()) + "," + (rudderr.ToString());
+                string args = (throttllee.ToString()) + "," + (rudderr.ToString()) + "," + (longii.ToString()) + "," + (latii.ToString());
                 return args;
                
             }
