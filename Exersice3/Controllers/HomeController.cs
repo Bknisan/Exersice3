@@ -69,7 +69,7 @@ namespace Exersice3.Controllers
         public ActionResult save(string ip, int port,int timeSlice,int timePeriod, string file)
         {
             ViewBag.period = timePeriod * 1000;
-            ViewBag.interval = (1000 / timeSlice);
+            ViewBag.interval = timeSlice / 1000;
             localClient.Instance.FileToWrite = file;
             if (!readerAlreadyWorking)
             {
