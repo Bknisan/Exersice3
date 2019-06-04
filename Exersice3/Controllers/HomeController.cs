@@ -38,6 +38,8 @@ namespace Exersice3.Controllers
                 // run this function when parameters updated.
                 localClient.Instance.propChanged += Handler;
             }
+            localClient.ip = ip;
+            localClient.port = port;
             localClient.Instance.Request(ip, port);
             readerAlreadyWorking = true;
             // wait until first update.(just for the first time.)
@@ -47,7 +49,9 @@ namespace Exersice3.Controllers
         [HttpGet]
         public ActionResult Refresh(string ip, int port, int timeSlice)
         {
-            ViewBag.interval = (1000 / timeSlice);
+            localClient.ip = ip;
+            localClient.port = port;
+            ViewBag.interval = (1000 * timeSlice);
             if (!readerAlreadyWorking)
             {
                 // run this function when parameters updated.
@@ -111,7 +115,9 @@ namespace Exersice3.Controllers
             byte[] info = System.Text.Encoding.ASCII.GetBytes(data);
             //write data
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream fsout = new FileStream(System.Web.Hosting.HostingEnvironment.MapPath(localClient.Instance.FileToWrite), FileMode.Append, FileAccess.Write, FileShare.None);
+            string path = @"~/App_Data/";
+            path += localClient.Instance.FileToWrite;
+            FileStream fsout = new FileStream(Server.MapPath(path), FileMode.Append, FileAccess.Write, FileShare.None);
             bf.Serialize(fsout, info);
             fsout.Close();
             var json = new JavaScriptSerializer().Serialize(position);
@@ -120,8 +126,10 @@ namespace Exersice3.Controllers
 
         [HttpPost]
         public string ReadLine(string fileName)
-        {           
-            FileStream fsin = new FileStream(System.Web.Hosting.HostingEnvironment.MapPath(localClient.Instance.FileToRead), FileMode.Open, FileAccess.Read, FileShare.None);
+        {
+            string path = @"~/App_Data/";
+            path += localClient.Instance.FileToRead;
+            FileStream fsin = new FileStream(Server.MapPath(path), FileMode.Open, FileAccess.Read, FileShare.None);
             fsin.Seek(0, SeekOrigin.Current);
             StreamReader sr = new StreamReader(fsin);
             string values = sr.ReadLine();

@@ -18,8 +18,8 @@ namespace Exersice3.Models
         public string FileToRead;
         public string FileToWrite;
         public static Socket mySocket;
-        public static string ip { get; set; } = "127.0.0.1";
-        public static int port { get; set; } = 5400;
+        public static  string ip { get; set; } = "127.0.0.1";
+        public static  int port { get; set; } = 5400;
         private static localClient s_instace = null;
         public bool changeIndicator { get; set; } = false;
         public static localClient Instance

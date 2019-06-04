@@ -42,8 +42,8 @@
 </style>
 <body>
     <div class="app-container">
-        <img src="~/App_Data/export-map-share.png" class="map" />
-        <img src="~/App_Data/marker.png" class="marker" />
+        <img src="~/Images/export-map-share.png" class="map" />
+        <img src="~/Images/marker.png" class="marker" />
     </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script>
@@ -55,6 +55,13 @@
             marker.style.top = yPos;
             marker.style.left = xPos;
         }
+        function tmp() {
+            var i
+            for (i = 0; i < 40; i++) {
+                applicator();
+            }
+        }
+
         function applicator() {
             $.post('@Url.Action("WriteData")').done(function (response) {
                 var position = JSON.parse(response);
@@ -71,7 +78,7 @@
             var marker = document.querySelector('.marker');
             marker.style.top = yPos;
             marker.style.left = xPos;
-        setTimeout(setInterval(applicator,@frequancy),@period);
+        setTimeout(tmp,@period);
     </script>
     @RenderBody()
 </body>

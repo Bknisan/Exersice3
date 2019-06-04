@@ -24,14 +24,14 @@
     .map {
         height: 100%;
         width: 100%;
-        z-index:3;
+        z-index: 3;
     }
 
     .marker {
         position: absolute;
         height: 15px;
         width: 15px;
-        z-index:2;
+        z-index: 2;
     }
 
     .app-container {
@@ -47,16 +47,14 @@
 </style>
 <body>
     <div class="app-container">
-        <img src="~/App_Data/export-map-share.png" class="map" />
-        <img src="~/App_Data/marker.png" class="marker" />
-        <canvas class="distance" width="300" height="300" style="border:2px solid #d3d3d3;" id="way">
-        </canvas>
+        <img src="~/Images/export-map-share.png" class="map" />
+        <img src="~/Images/marker.png" class="marker" />
+        <canvas class="distance" width="2000" height="1500" style="border:2px solid #d3d3d3;" id="way"></canvas>
     </div>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
             crossorigin="anonymous"></script>
     <script>
-
             function setLocation(value, max, min) {
                 return (100 *((value + max) / (max - min)));
         }
@@ -67,7 +65,7 @@
                 var yPos = latitude + '%';
                 marker.style.top = yPos;
                 marker.style.left = xPos;
-                
+
         }
         function getPosition() {
             $.post('@Url.Action("Position")').done(function (response) {
