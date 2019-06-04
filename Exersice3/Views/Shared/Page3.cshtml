@@ -7,11 +7,13 @@
     var period = ViewBag.period;
     var frequancy = ViewBag.interval;
     var fileName = ViewBag.fileName;
+    var calls = ViewBag.calls;
 }
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>save info page</title>
+    <title>Plane moving</title>
 </head>
 <style>
     html {
@@ -19,6 +21,7 @@
     }
 
     body {
+        width: 100%;
         height: 100%;
         margin: 0;
         overflow: hidden;
@@ -27,56 +30,77 @@
     .map {
         height: 100%;
         width: 100%;
+        z-index: 3;
     }
 
     .marker {
         position: absolute;
         height: 15px;
         width: 15px;
+        z-index: 2;
     }
 
     .app-container {
         height: 100%;
         position: relative;
     }
+
+    .distance {
+        top: 0;
+        position: absolute;
+        z-index: 1;
+    }
 </style>
 <body>
     <div class="app-container">
         <img src="~/Images/export-map-share.png" class="map" />
         <img src="~/Images/marker.png" class="marker" />
+        <canvas class="distance" width="2000" height="1500" style="border:2px solid #d3d3d3;" id="way"></canvas>
     </div>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
     <script>
-        function positionMarker(lon, lat) {
-            var latitude = setLocation(lat, 90, -90);
-            var longitude = setLocation(lon, 180, -180);
-            var xPos = longitude + '%';
-            var yPos = latitude + '%';
-            marker.style.top = yPos;
-            marker.style.left = xPos;
-        }
-
-        function applicator() {
-            $.post('@Url.Action("WriteData")').done(function (response) {
-                var position = JSON.parse(response);
-                positionMarker(position.longi, position.lati);
-            });
-        }
             function setLocation(value, max, min) {
                 return (100 *((value + max) / (max - min)));
         }
-        var calls = @period;
-        calls = calls / @frequancy;
-        var lat = setLocation(@latitude, 90, -90);
-        var lon = setLocation(@longitude, 180, -180);
-        var xPos = lon + '%';
-        var yPos = lat + '%';
+            function positionMarker(lon, lat) {
+                var latitude = setLocation(lat, 90, -90);
+                var longitude = setLocation(lon, 180, -180);
+                var xPos = longitude + '%';
+                var yPos = latitude + '%';
+                marker.style.top = yPos;
+                marker.style.left = xPos;
+
+        }
+        function getPosition() {
+            $.post('@Url.Action("WriteData")').done(function (response) {
+                var position = JSON.parse(response);
+                var newx = (setLocation(position.longi, 180, -180) / 100) * window.innerWidth;
+                var newy = (setLocation(position.lati, 90, -90) / 100) * window.innerHeight;
+                positionMarker(position.longi, position.lati);
+                if (lastPos) {
+                    var lastX = (setLocation(lastPos.longi, 180, -180) / 100) * window.innerWidth;
+                    var lastY = (setLocation(lastPos.lati, 90, -90) / 100) * window.innerHeight;
+                    console.log(lastX, lastY, newx, newy);
+                    airplanePath.beginPath();
+                    airplanePath.moveTo(lastX, lastY);
+                    airplanePath.lineTo(newx, newy);
+                    airplanePath.stroke();
+                }
+                lastPos = position;
+            });
+        }
         var marker = document.querySelector('.marker');
-        marker.style.top = yPos;
-        marker.style.left = xPos;
-        var i;
-        for (i = 0; i < calls; i++) {
-            setTimeout(applicator,@frequancy);
+        var lastPos;
+        var airplanePath = document.getElementById('way').getContext('2d');
+        document.getElementById('way').height = window.innerHeight;
+        document.getElementById('way').width = window.innerWidth;
+        // check.
+        getPosition();
+        var i = 0;
+        for (i = 0; i < @calls; i++) {
+            setTimeout(getPosition,@frequancy);
         }
     </script>
     @RenderBody()

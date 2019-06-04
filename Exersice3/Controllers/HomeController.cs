@@ -77,6 +77,7 @@ namespace Exersice3.Controllers
         {
             ViewBag.period = timePeriod * 1000;
             ViewBag.interval = timeSlice / 1000;
+            ViewBag.calls = (timePeriod * timeSlice);
             localClient.Instance.FileToWrite = file;
             if (!readerAlreadyWorking)
             {
