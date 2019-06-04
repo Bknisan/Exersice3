@@ -55,9 +55,6 @@
             marker.style.top = yPos;
             marker.style.left = xPos;
         }
-        function tmp() {
-            setInterval(applicator,@frequancy);
-        }
 
         function applicator() {
             $.post('@Url.Action("WriteData")').done(function (response) {
@@ -67,15 +64,20 @@
         }
             function setLocation(value, max, min) {
                 return (100 *((value + max) / (max - min)));
-            }
-            var lat = setLocation(@latitude, 90, -90);
-            var lon = setLocation(@longitude, 180, -180);
-            var xPos = lon + '%';
-            var yPos = lat + '%';
-            var marker = document.querySelector('.marker');
-            marker.style.top = yPos;
-            marker.style.left = xPos;
-        setTimeout(tmp,@period);
+        }
+        var calls = @period;
+        calls = calls / @frequancy;
+        var lat = setLocation(@latitude, 90, -90);
+        var lon = setLocation(@longitude, 180, -180);
+        var xPos = lon + '%';
+        var yPos = lat + '%';
+        var marker = document.querySelector('.marker');
+        marker.style.top = yPos;
+        marker.style.left = xPos;
+        var i;
+        for (i = 0; i < calls; i++) {
+            setTimeout(applicator,@frequancy);
+        }
     </script>
     @RenderBody()
 </body>

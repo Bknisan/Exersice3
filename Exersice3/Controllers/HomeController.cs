@@ -19,20 +19,27 @@ namespace Exersice3.Controllers
         {
             return View();
         }
-
+        [HttpGet]
         public ActionResult animation(string fileName, int frequancy)
         {
             localClient.Instance.FileToRead = fileName;
             // make sure start from the begginig.
-            FileStream fsin = new FileStream(System.Web.Hosting.HostingEnvironment.MapPath(localClient.Instance.FileToRead), FileMode.Open, FileAccess.Read, FileShare.None);
+            string path = @"~/App_Data/";
+            path += localClient.Instance.FileToRead;
+            FileStream fsin = new FileStream(Server.MapPath(path), FileMode.Open, FileAccess.Read, FileShare.None);
             fsin.Seek(0, SeekOrigin.Begin);
             fsin.Close();
             ViewBag.interval = (1000 / frequancy);
-            return View();
+            return View("animation");
         }
         [HttpGet]
         public ActionResult display(string ip, int port)
         {
+            // check if animation URL or display.
+            if(ip.CompareTo(localClient.ip) != 0)
+            {
+                return animation(ip,port);
+            }
             if (!readerAlreadyWorking)
             {
                 // run this function when parameters updated.

@@ -26,9 +26,6 @@ namespace Exersice3
             routes.MapRoute("save", "display/{ip}/{port}/{timeSlice}/{timePeriod}/{file}",
                 defaults: new {controller = "Home", action = "save"}
                 );
-            routes.MapRoute("animation", "display/{file}/{frequancy}",
-                defaults: new {controller = "Home",action = "animation" }
-                );
            
         }
     }

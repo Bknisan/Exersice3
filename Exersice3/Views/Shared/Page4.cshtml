@@ -72,6 +72,8 @@
             $.post('@Url.Action("ReadLine")').done(function (response) {
                 // if its the end of the session start over.
                 if (response == "") {
+                    alert("Session Done.");
+                    clearInterval(intervalID);
                     return;
                 }
                 var position = JSON.parse(response);
@@ -95,10 +97,8 @@
         var airplanePath = document.getElementById('way').getContext('2d');
         document.getElementById('way').height = window.innerHeight;
         document.getElementById('way').width = window.innerWidth;
-        // check.
-        console.log(airplanePath);
         getPosition();
-        setInterval(getPosition,@interval);
+        var intervalID = setInterval(getPosition,@interval);
     </script>
     @RenderBody()
 </body>
